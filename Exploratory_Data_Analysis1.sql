@@ -1,5 +1,5 @@
 /* 
-Query #1: Extracting tables and their columns from sakila schema
+Query #1: Extracting tables and their columns from the sakila schema
 */
 SELECT 
 	table_name AS tables,
