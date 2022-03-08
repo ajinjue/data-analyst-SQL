@@ -100,7 +100,3 @@ INNER JOIN payment AS p
 GROUP BY c.name
 ORDER BY revenue DESC
 LIMIT 3;
-    
-
-SELECT *
-FROM payment;
