@@ -67,7 +67,7 @@ WHERE release_year =
 			FROM film);
 
 /*
-Query #10: Which categories of films where released in 2006?
+Query #10: Which categories of films were released in 2006?
 */
 SELECT 
 	f.title,
