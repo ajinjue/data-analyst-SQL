@@ -53,3 +53,54 @@ Query #8: The range of rental rate of the films
 SELECT
 	MAX(rental_rate) - MIN(rental_rate) AS rental_range
 FROM film;
+
+/*
+Query #9: What are the latest films released?
+*/
+SELECT 
+	title,
+    description,
+    release_year
+FROM film
+WHERE release_year = 
+			(SELECT MAX(release_year)
+			FROM film);
+
+/*
+Query #10: Which categories of films where released in 2006?
+*/
+SELECT 
+	f.title,
+    c.name
+FROM film AS f
+INNER JOIN film_category AS fc
+	ON f.film_id = fc.film_id
+INNER JOIN category AS c
+	USING(category_id)
+WHERE release_year = 2006;
+
+/* 
+Query #11: What are the three most revenue generating film categories?
+*/
+SELECT
+	c.name AS category_name,
+    -- total amount paid for rental in each category
+    SUM(p.amount) AS revenue
+FROM film AS f
+INNER JOIN film_category AS fc
+	ON f.film_id = fc.film_id
+INNER JOIN category AS c
+	ON fc.category_id = c.category_id
+INNER JOIN inventory AS i
+	ON f.film_id = i.film_id
+INNER JOIN rental AS r
+	ON i.inventory_id = r.inventory_id
+INNER JOIN payment AS p
+	ON r.rental_id = p.rental_id
+GROUP BY c.name
+ORDER BY revenue DESC
+LIMIT 3;
+    
+
+SELECT *
+FROM payment;
