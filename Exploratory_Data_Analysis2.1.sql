@@ -100,3 +100,83 @@ INNER JOIN payment AS p
 GROUP BY c.name
 ORDER BY revenue DESC
 LIMIT 3;
+
+/*
+Query #12: How long did the customers stay with films?
+*/
+SELECT 
+	customer_id,
+    -- rental period for each customer per rental in days
+    DATEDIFF(return_date, rental_date) AS rental_period
+FROM rental;
+
+/*
+Query #13: Which customers exceeded the duration of rentals?
+*/
+SELECT 
+	c.customer_id,
+    first_name,
+    last_name,
+    email
+FROM customer AS c
+INNER JOIN rental AS r
+	ON c.customer_id = r.customer_id
+INNER JOIN inventory AS i
+	ON r.inventory_id = i.inventory_id 
+INNER JOIN film AS f
+	ON i.film_id = f.film_id
+WHERE DATEDIFF(return_date, rental_date) > rental_duration;
+
+/*
+Query #14: Which customers have exceeded the duration of rental over ten times? 
+*/
+-- CTE to create customers who exceed rental duration
+WITH exceed_rentals AS
+	(SELECT 
+		c.customer_id,
+		first_name,
+		last_name,
+		email
+	FROM customer AS c
+	INNER JOIN rental AS r
+		ON c.customer_id = r.customer_id
+	INNER JOIN inventory AS i
+		ON r.inventory_id = i.inventory_id 
+	INNER JOIN film AS f
+		ON i.film_id = f.film_id
+	WHERE DATEDIFF(return_date, rental_date) > rental_duration)
+
+SELECT
+	customer_id,
+    first_name,
+    last_name,
+    -- Count number of rental exceedings from each customer
+    COUNT(customer_id) AS num_rental_exceedings
+FROM exceed_rentals
+GROUP BY customer_id, first_name, last_name
+HAVING COUNT(customer_id) > 10
+ORDER BY num_rental_exceedings DESC;
+
+/*
+Query #15: What is the location of these defaulters above?
+*/
+SELECT 
+	c.customer_id,
+    address,
+    city,
+    country
+FROM customer AS c
+INNER JOIN rental AS r
+	ON c.customer_id = r.customer_id
+INNER JOIN inventory AS i
+	ON r.inventory_id = i.inventory_id 
+INNER JOIN film AS f
+	ON i.film_id = f.film_id
+INNER JOIN address AS a
+	ON c.address_id = a.address_id
+INNER JOIN city AS ci
+	ON a.city_id = ci.city_id
+INNER JOIN country AS co
+	ON ci.country_id = co.country_id
+WHERE DATEDIFF(return_date, rental_date) > rental_duration
+
