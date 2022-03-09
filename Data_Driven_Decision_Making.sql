@@ -49,11 +49,7 @@ SELECT
     EXTRACT(MONTH FROM rental_date) AS rental_month,
     -- total amount paid for rental in each category
     SUM(p.amount) AS total_revenue
-FROM film AS f
-INNER JOIN inventory AS i
-	ON f.film_id = i.film_id
-INNER JOIN rental AS r
-	ON i.inventory_id = r.inventory_id
+FROM rental AS r
 INNER JOIN payment AS p
 	ON r.rental_id = p.rental_id
 GROUP BY rental_month
@@ -69,10 +65,6 @@ SELECT
 FROM customer AS c
 INNER JOIN rental AS r
 	ON c.customer_id = r.customer_id
-INNER JOIN inventory AS i
-	ON r.inventory_id = i.inventory_id 
-INNER JOIN film AS f
-	ON i.film_id = f.film_id
 INNER JOIN address AS a
 	ON c.address_id = a.address_id
 INNER JOIN city AS ci
