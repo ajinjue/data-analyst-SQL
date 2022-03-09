@@ -10,8 +10,7 @@
     Extracting information from the data which is relevant to measure the success of the film rental service. e.g
        - Total number of rentals: revenue
        - Customer satisfaction
-       - Number of active customers: Customer engagement.
-*/
+       - Number of active customers: Customer engagement. */
 
 /*
 Query #1: What is the total number of rentals?
@@ -76,13 +75,69 @@ INNER JOIN payment AS p
 GROUP BY country
 ORDER BY total_revenue DESC;
 
+/*
+Query #6: Preferences of customers per country
+*/
+SELECT 
+    country,
+    -- Count number of unique customers from each country
+    COUNT(DISTINCT c.customer_id) AS num_of_customers 
+FROM customer AS c
+INNER JOIN rental AS r
+	ON c.customer_id = r.customer_id
+INNER JOIN address AS a
+	ON c.address_id = a.address_id
+INNER JOIN city AS ci
+	ON a.city_id = ci.city_id
+INNER JOIN country AS co
+	ON ci.country_id = co.country_id
+INNER JOIN payment AS p
+	ON r.rental_id = p.rental_id
+GROUP BY country
+ORDER BY num_of_customers DESC;
 
+/*
+Query #7: Number of films by category and their average price for categories with more than two movies
+*/
+SELECT 
+    name AS category,
+    -- Number of unique films per category
+    COUNT(DISTINCT f.film_id) AS num_of_films,
+    -- Average price of films per category
+    ROUND(AVG(rental_rate), 2) AS avg_price
+FROM film AS f
+INNER JOIN film_category AS fc
+    ON f.film_id = fc.film_id
+INNER JOIN category AS c
+    ON fc.category_id = c.category_id
+GROUP BY name
+HAVING COUNT(DISTINCT f.film_id) > 2
+ORDER BY num_of_films DESC;
 
-
-
-SELECT *
-FROM rental
-
+/*
+Query #8: Popularity of actors in films
+*/
+-- Get the actors in films
+WITH film_actors AS
+    (SELECT
+        first_name,
+        last_name,
+        f.film_id
+    FROM actor AS a
+    INNER JOIN film_actor AS fa
+        ON a.actor_id = fa.actor_id
+    INNER JOIN film AS f
+        ON fa.film_id = f.film_id)
+-- Count how often an actor feature in different films
+SELECT
+    first_name,
+    last_name,
+    COUNT( DISTINCT film_id) AS popularity
+FROM film_actors
+GROUP BY first_name, last_name
+ORDER BY popularity DESC;
+    
+    
 
 
 
