@@ -178,5 +178,5 @@ INNER JOIN city AS ci
 	ON a.city_id = ci.city_id
 INNER JOIN country AS co
 	ON ci.country_id = co.country_id
-WHERE DATEDIFF(return_date, rental_date) > rental_duration
+WHERE DATEDIFF(return_date, rental_date) > rental_duration;
 

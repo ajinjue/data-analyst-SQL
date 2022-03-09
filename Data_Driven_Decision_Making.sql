@@ -76,7 +76,7 @@ GROUP BY country
 ORDER BY total_revenue DESC;
 
 /*
-Query #6: Preferences of customers per country
+Query #6: Number of customers per country
 */
 SELECT 
     country,
@@ -136,6 +136,21 @@ SELECT
 FROM film_actors
 GROUP BY first_name, last_name
 ORDER BY popularity DESC;
+
+/*
+Query #9: List films whose rental rate is greater or equal to $3 and are of the sports category
+*/
+SELECT
+    name AS category,
+    title,
+    rental_rate
+FROM film AS f
+INNER JOIN film_category AS fc
+    ON f.film_id = fc.film_id
+INNER JOIN category AS c
+    ON fc.category_id = c.category_id
+WHERE rental_rate >= 3.0 AND name = 'Sports'
+
     
     
 
